@@ -1,50 +1,27 @@
 "use client";
 
 import { useUserSession } from "@/hooks/use-user-session";
-import { signInWithGoogle, signOutWithGoogle } from "@/lib/firebase/auth";
-import { createSession, removeSession } from "@/actions/auth-actions";
+import styled from "@emotion/styled";
+import { defaultTheme } from "@/theme";
+
+const HeaderWrapper = styled.header({
+  padding: defaultTheme.spacing.large,
+  gap: defaultTheme.spacing.medium,
+  display: "flex",
+  flexDirection: "row",
+});
 
 export function Header({ session }: { session: string | null }) {
   const [userSessionId, user] = useUserSession(session);
 
-  const handleSignIn = async () => {
-    const userUid = await signInWithGoogle();
-    if (userUid) {
-      await createSession(userUid);
-    }
-  };
-
-  const handleSignOut = async () => {
-    await signOutWithGoogle();
-    await removeSession();
-  };
-
-  if (!userSessionId) {
-    return (
-      <header>
-        <button onClick={handleSignIn}>Sign In</button>
-      </header>
-    );
-  }
-
   return (
-    <header>
-      <h1>Welcome, {user ? user.displayName : "..."}!</h1>
-      <nav>
-        <ul>
-          <li>
-            <a href="#">Menu A</a>
-          </li>
-          <li>
-            <a href="#">Menu B</a>
-          </li>
-          <li>
-            <a href="#">Menu C</a>
-          </li>
-        </ul>
-      </nav>
-      <button onClick={handleSignOut}>Sign Out</button>
-    </header>
+    <HeaderWrapper>
+      {userSessionId ? (
+        <h2>Welcome, {user ? user.displayName : "..."}!</h2>
+      ) : (
+        <h2>Log In</h2>
+      )}
+    </HeaderWrapper>
   );
 }
 
